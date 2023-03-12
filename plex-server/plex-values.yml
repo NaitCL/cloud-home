@@ -1,0 +1,128 @@
+# https://github.com/k8s-at-home/charts/blob/master/charts/stable/plex/values.yaml
+
+image:
+  repository: ghcr.io/onedr0p/plex
+  tag: 1.31.0.6654-02189b09f
+env:
+  TZ: "America/Santiago"
+  ADVERTISE_IP: "192.168.100.99"
+  ALLOWED_NETWORKS: "192.168.100.0/24"
+  # https://www.plex.tv/claim/
+  PLEX_CLAIM: "claim-B4_dVihPYkjyzq6CBHnE"
+  PLEX_PREFERENCE_1: "FriendlyName=nait-Cloud-Home"
+  PLEX_PREFERENCE_2: "EnableIPv6=0"
+  PLEX_PREFERENCE_3: "logDebug=0"
+  PLEX_PREFERENCE_4: "DisableTLSv1_0=1"
+  PLEX_PREFERENCE_5: "LanNetworksBandwidth=192.168.100.0/24"
+  PLEX_PREFERENCE_6: "TranscoderQuality=2"
+  PLEX_PREFERENCE_7: "TreatWanIpAsLocal=1"
+  PLEX_PREFERENCE_8: "TranscoderH264BackgroundPreset=fast"
+  PLEX_PREFERENCE_9: "TranscoderTempDirectory=/transcode"
+  PLEX_PREFERENCE_10: "HardwareAcceleratedCodecs=1"
+  PLEX_PREFERENCE_11: "autoEmptyTrash=1"
+  PLEX_PREFERENCE_12: "ManualPortMappingPort=32400"
+  PLEX_PREFERENCE_13: "ScheduledLibraryUpdateInterval=28800"
+  PLEX_PREFERENCE_14: "TranscoderCanOnlyRemuxVideo=0"
+  PLEX_PREFERENCE_15: "HardwareAcceleratedEncoders=1"
+  PLEX_PREFERENCE_16: "sendCrashReports=0"
+  PLEX_PREFERENCE_17: "DlnaEnabled=0"
+  PLEX_PREFERENCE_18: "ManualPortMappingMode=1"
+  PLEX_PREFERENCE_19: "ScheduledLibraryUpdatesEnabled=1"
+  PLEX_PREFERENCE_20: "CinemaTrailersFromLibrary=0"
+  PLEX_PREFERENCE_21: "CinemaTrailersType=1"
+  ## PLEX_PREFERENCE_22: "MetricsEpoch=1"
+  PLEX_PREFERENCE_23: "AcceptedEULA=1"
+  ## PLEX_PREFERENCE_24: "PublishServerOnPlexOnlineKey=1"
+  ## PLEX_PREFERENCE_25: "DvrIncrementalEpgLoader=0"
+  ## PLEX_PREFERENCE_26: "LastAutomaticMappedPort=0"
+  PLEX_PREFERENCE_27: "RelayEnabled=1"
+  ## PLEX_PREFERENCE_28: "customConnections=https://plex.encriptamos.com"
+  ## PLEX_PREFERENCE_29: "LanguageInCloud=1"
+  PLEX_PREFERENCE_30: "GdmEnabled=0"
+  ## PLEX_PREFERENCE_31: "secureConnections=2"
+  PLEX_PREFERENCE_32: "TranscoderToneMapping=0"
+hostNetwork: true
+service:
+  main:
+    primary: true
+    type: ClusterIP
+    ports:
+      http:
+        port: 32400
+        protocol: TCP
+        nodePort: 32400
+    # externalTrafficPolicy: Local
+  dnla-tcp:
+    enabled: false
+    type: NodePort
+    ports:
+      dnla-tcp:
+        enabled: false
+        port: 32469
+        protocol: TCP
+        targetPort: 32469
+    # externalTrafficPolicy: Local
+  dnla-udp:
+    enabled: false
+    type: NodePort
+    ports:
+      dnla-udp:
+        enabled: false
+        port: 1900
+        protocol: TCP
+        targetPort: 1900
+    # externalTrafficPolicy: Local
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+ingress:
+  main:
+    enabled: true
+    primary: true
+    annotations:
+      #nginx.ingress.kubernetes.io/rewrite-target: /$2
+      kubernetes.io/ingress.class: nginx
+        #      kubernetes.io/tls-acme: "true"
+        #      cert-manager.io/cluster-issuer: letsencrypt-prod
+    hosts:
+      - host: "naitcloud.local"
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: "plex-server"
+                port:
+                  number: 32400
+    # tls:
+    #   - secretName: plex-encriptamos-com-tls
+    #     hosts:
+    #       - plex.naitcloud.com
+persistence:
+  config:
+    enabled: true
+    # existingClaim: plex-config
+    mountPath: /config
+    storageClass: standard
+    size: 500Mi
+    accessMode: ReadWriteOnce
+    skipuninstall: false
+  transcode:
+    enabled: false
+    mountPath: /transcode
+    storageClass: standard
+    size: 50Gi
+    accessMode: ReadWriteOnce
+    skipuninstall: false
+  media:
+    enabled: true
+    existingClaim: plex-media
+    mountPath: /media
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    memory: 4096Mi
+# nodeSelector:
+#   kubernetes.io/hostname: 'worker06'
