@@ -34,14 +34,5 @@ ingress:
 persistence:
   config:
     enabled: true
-    mountPath: /config
-    storageClass: standard
-    size: 500Mi
-    accessMode: ReadWriteOnce
-    skipuninstall: false
-resources:
-  requests:
-    cpu: 200m
-    memory: 256Mi
-  limits:
-    memory: 4096Mi
+  torrentblackhole:
+    enabled: false
