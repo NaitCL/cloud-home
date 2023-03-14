@@ -103,11 +103,10 @@ persistence:
     enabled: true
     # existingClaim: plex-config
     mountPath: /config
-    existingClaim: plex-config
-    # storageClass: standard
-    # size: 500Mi
-    # accessMode: ReadWriteOnce
-    # skipuninstall: false
+    storageClass: standard
+    size: 500Mi
+    accessMode: ReadWriteOnce
+    skipuninstall: false
   transcode:
     enabled: false
     mountPath: /transcode
