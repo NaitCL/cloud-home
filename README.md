@@ -4,8 +4,6 @@
 <details><summary>docker</summary>
 <p>
 
-#### We can hide anything, even code!
-
 ```bash
   1. Actualizar repositorios de Ubuntu Server
     - sudo apt update
@@ -41,4 +39,3 @@
 
 </p>
 </details>
-```
