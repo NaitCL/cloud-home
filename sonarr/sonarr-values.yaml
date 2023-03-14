@@ -1,0 +1,47 @@
+image:
+  repository: ghcr.io/onedr0p/sonarr
+  tag: 3.0.10.1567
+  pullPolicy: IfNotPresent
+env:
+  TZ: "America/Santiago"
+  ADVERTISE_IP: "192.168.100.99"
+  ALLOWED_NETWORKS: "192.168.100.0/24"
+service:
+  main:
+    primary: true
+    type: ClusterIP
+    ports:
+      http:
+        port: 8989
+        protocol: TCP
+        nodePort: 8989
+ingress:
+  main:
+    enabled: true
+    primary: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+    hosts:
+      - host: "sonarr.naitcloud.home"
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: "sonarr-server"
+                port:
+                  number: 8989
+persistence:
+  config:
+    enabled: true
+    mountPath: /config
+    storageClass: standard
+    size: 500Mi
+    accessMode: ReadWriteOnce
+    skipuninstall: false
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    memory: 4096Mi

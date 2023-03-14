@@ -1,0 +1,47 @@
+image:
+  repository: ghcr.io/onedr0p/radarr
+  tag: 4.3.2.6857
+  pullPolicy: IfNotPresent
+env:
+  TZ: "America/Santiago"
+  ADVERTISE_IP: "192.168.100.99"
+  ALLOWED_NETWORKS: "192.168.100.0/24"
+service:
+  main:
+    primary: true
+    type: ClusterIP
+    ports:
+      http:
+        port: 7878
+        protocol: TCP
+        nodePort: 7878
+ingress:
+  main:
+    enabled: true
+    primary: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+    hosts:
+      - host: "radarr.naitcloud.home"
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: "radarr-server"
+                port:
+                  number: 7878
+persistence:
+  config:
+    enabled: true
+    mountPath: /config
+    storageClass: standard
+    size: 500Mi
+    accessMode: ReadWriteOnce
+    skipuninstall: false
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    memory: 4096Mi

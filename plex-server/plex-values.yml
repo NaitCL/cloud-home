@@ -85,7 +85,7 @@ ingress:
         #      kubernetes.io/tls-acme: "true"
         #      cert-manager.io/cluster-issuer: letsencrypt-prod
     hosts:
-      - host: "naitcloud.local"
+      - host: "plex.naitcloud.home"
         paths:
           - path: /
             pathType: Prefix
@@ -103,10 +103,11 @@ persistence:
     enabled: true
     # existingClaim: plex-config
     mountPath: /config
-    storageClass: standard
-    size: 500Mi
-    accessMode: ReadWriteOnce
-    skipuninstall: false
+    existingClaim: plex-config
+    # storageClass: standard
+    # size: 500Mi
+    # accessMode: ReadWriteOnce
+    # skipuninstall: false
   transcode:
     enabled: false
     mountPath: /transcode
@@ -116,7 +117,7 @@ persistence:
     skipuninstall: false
   media:
     enabled: true
-    existingClaim: plex-media-pv
+    existingClaim: plex-media
     mountPath: /media
 resources:
   requests:
