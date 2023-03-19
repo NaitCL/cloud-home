@@ -80,10 +80,7 @@ ingress:
     enabled: true
     primary: true
     annotations:
-      #nginx.ingress.kubernetes.io/rewrite-target: /$2
       kubernetes.io/ingress.class: nginx
-        #      kubernetes.io/tls-acme: "true"
-        #      cert-manager.io/cluster-issuer: letsencrypt-prod
     hosts:
       - host: "plex.naitcloud.home"
         paths:
@@ -94,14 +91,9 @@ ingress:
                 name: "plex-server"
                 port:
                   number: 32400
-    # tls:
-    #   - secretName: plex-encriptamos-com-tls
-    #     hosts:
-    #       - plex.naitcloud.com
 persistence:
   config:
     enabled: true
-    # existingClaim: plex-config
     mountPath: /config
     storageClass: standard
     size: 500Mi
@@ -124,5 +116,3 @@ resources:
     memory: 256Mi
   limits:
     memory: 4096Mi
-# nodeSelector:
-#   kubernetes.io/hostname: 'worker06'
